@@ -9,7 +9,9 @@
 namespace Super\Tests\Cache;
 
 use PHPUnit\Framework\TestCase;
+use Redis;
 use Super\Cache\RedisConnection;
+use Super\Cache\RedisStore;
 
 class RedisStoreTest extends TestCase
 {
@@ -23,28 +25,37 @@ class RedisStoreTest extends TestCase
         $server =
             [
                 'host' => '192.168.99.100',
-                'port' => 11211,
+                'port' => 6379,
                 'timeout' => 60
             ];
 
-        $store = RedisConnection::getNewInstance($server['host'] ,  $server['port'] , $server['timeout']);
 
-        $store->put("a1", "b1", 1);
-        $this->assertEquals("b1", $store->get("a1"));
-        $this->assertFalse($store->get("333"));
+        $redis = new Redis();
+        $redis->connect($server['host'] ,  $server['port'] , $server['timeout']);
+        //$this->assertTrue($connection);
+        $val = $redis->set("foo1" ,"bar" ,0);
+        $this->assertTrue($val);
+        var_dump($redis->get("foo1"));die();
+//        $this->assertEquals("bar" , );
 
-        $store->put("a1", "b2", 1);
-        $this->assertEquals("b2", $store->get("a1"));
+//        $store = new RedisStore($redis);
+//
+//        $store->put("a1", "b1", 1);
+//        $this->assertEquals("b1", $store->get("a1"));
+//        $this->assertFalse($store->get("333"));
 
-        $store->put("a2", 2, 1);
-        $this->assertEquals(3, $store->increment("a2"));
-
-        $store->forget("a2");
-        $this->assertFalse($store->get("a2"));
-
-        $store->flush();
-        $this->assertFalse($store->get("a1"));
-        $this->assertFalse($store->get("a2"));
+//        $store->put("a1", "b2", 1);
+//        $this->assertEquals("b2", $store->get("a1"));
+//
+//        $store->put("a2", 2, 1);
+//        $this->assertEquals(3, $store->increment("a2"));
+//
+//        $store->forget("a2");
+//        $this->assertFalse($store->get("a2"));
+//
+//        $store->flush();
+//        $this->assertFalse($store->get("a1"));
+//        $this->assertFalse($store->get("a2"));
 
     }
 

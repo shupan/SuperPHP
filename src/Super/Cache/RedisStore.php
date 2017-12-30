@@ -2,16 +2,22 @@
 
 namespace Super\Cache;
 
+use Redis;
 use Super\Api\Cache\Store;
+use Super\Cache;
+
 
 /**
  * User: phil.shu
  * Date: 2017/12/29
  * Time: 上午9:30
  */
+
 class RedisStore implements Store
 {
-    use GetMultipleKeys;
+
+    private $prefix = '';
+
 
     /**
      * 缓存连接的对象
@@ -20,9 +26,11 @@ class RedisStore implements Store
     private $cache = null;
 
 
-    public function __construct($host , $port , $timeout = 0.0)
+    public function __construct(Redis $redis, $prefix = '')
     {
-        $this->cache = RedisConnection::getNewInstance($host, $port, $timeout);
+
+        $this->cache = $redis;
+        $this->prefix = $this->prefix;
     }
 
 
@@ -42,13 +50,14 @@ class RedisStore implements Store
      *
      * @param  string $key
      * @param  mixed $value
-     * @param  float|int $minutes memcached set默认是秒
+     * @param  float|int $minutes redis set默认是秒
      * @return void
      */
     public function put($key, $value, $minutes)
     {
 
-        return $this->cache->set($key, $value, $minutes * 60);
+        $return = $this->cache->set($key, $value , $minutes * 60);
+        return $return;
     }
 
     /**
@@ -59,7 +68,7 @@ class RedisStore implements Store
      */
     public function forget($key)
     {
-        return $this->cache->delete($key);
+        return $this->cache->del($key);
     }
 
     /**
@@ -69,7 +78,7 @@ class RedisStore implements Store
      */
     public function flush()
     {
-        return $this->cache->flush();
+        return $this->cache->flushDB();
     }
 
 
@@ -82,7 +91,7 @@ class RedisStore implements Store
      */
     public function increment($key, $value = 1)
     {
-        return $this->cache->increment($key, $value);
+        return $this->cache->incrBy($key, $value);
     }
 
     /**
@@ -94,7 +103,7 @@ class RedisStore implements Store
      */
     public function decrement($key, $value = 1)
     {
-        return $this->increment($key, -1 * $value);
+        return $this->cache->decrBy($key , $value);
     }
 
     /**
@@ -107,7 +116,7 @@ class RedisStore implements Store
     public function forever($key, $value)
     {
 
-        return $this->put($key, $value, 0);
+        return $this->cache->set($key , $value ,0);
     }
 
     /**
@@ -117,8 +126,41 @@ class RedisStore implements Store
      */
     public function getPrefix()
     {
-        return "";
+        return $this->prefix;
+    }
+
+    public function setPrefix($prefix){
+
+        $this->prefix = $prefix;
     }
 
 
+    /**
+     * 可以获取多个key,如果返回的key里面是没有找到怎么会返回一个null值
+     *
+     * @param  array $keys
+     * @return array
+     */
+    public function many(array $keys)
+    {
+        return $this->cache->getMultiple($keys);
+    }
+
+    /**
+     *  一次性存放很多的缓存的数组,并指定失效时间
+     *  采用Redis的事务处理机制,保证数据批量请求的原子性
+     * @param  array $values
+     * @param  float|int $minutes
+     * @return void
+     */
+    public function putMany(array $values, $minutes)
+    {
+        $this->cache->multi();
+
+        foreach ($values as $key => $value) {
+            $this->put($key, $value, $minutes);
+        }
+
+        return $this->cache->exec();
+    }
 }

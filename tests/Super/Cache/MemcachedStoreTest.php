@@ -9,6 +9,7 @@
 namespace Super\Tests\Cache;
 
 use PHPUnit\Framework\TestCase;
+use Super\Cache\MemcachedConnection;
 use Super\Cache\MemcachedStore;
 
 class MemcachedStoreTest extends TestCase
@@ -28,7 +29,9 @@ class MemcachedStoreTest extends TestCase
             ]
         ];
 
-        $store = new MemcachedStore($servers);
+        $mc = new MemcachedConnection();
+        $memcached = $mc->connect($servers);
+        $store = new MemcachedStore($memcached,'');
 
         $store->put("a1", "b1", 1);
         $this->assertEquals("b1", $store->get("a1"));

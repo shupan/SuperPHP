@@ -11,7 +11,8 @@ use Super\Api\Cache\Store;
  */
 class MemcachedStore implements Store
 {
-    use GetMultipleKeys;
+
+    private $prefix = '';
 
     /**
      * 缓存连接的对象
@@ -20,11 +21,10 @@ class MemcachedStore implements Store
     private $cache = null;
 
 
-    public function __construct(array $servers, $connectionId = null, array $options = [], array $credentials = [])
+    public function __construct(\Memcached $memcached, $prefix = '')
     {
-
-        $mc = new MemcachedConnection();
-        $this->cache = $mc->connect($servers, $connectionId, $options, $credentials);
+        $this->cache = $memcached;
+        $this->prefix = $prefix;
     }
 
 
@@ -96,7 +96,7 @@ class MemcachedStore implements Store
      */
     public function decrement($key, $value = 1)
     {
-        return $this->increment($key, -1 * $value);
+        return $this->cache->decrement($key, $value);
     }
 
     /**
@@ -119,8 +119,41 @@ class MemcachedStore implements Store
      */
     public function getPrefix()
     {
-        return "";
+        return $this->prefix;
+    }
+
+    /**
+     * 设置前缀
+     * @param $prefix
+     */
+    public function setPrefix($prefix)
+    {
+
+        $this->prefix = $prefix;
     }
 
 
+    /**
+     * 可以获取多个key,如果返回的key里面是没有找到怎么会返回一个null值
+     *
+     * @param  array $keys
+     * @return array
+     */
+    public function many(array $keys)
+    {
+
+        return $this->cache->getMulti($keys);
+    }
+
+    /**
+     *  一次性存放很多的缓存的数组,并指定失效时间
+     *
+     * @param  array $values
+     * @param  float|int $minutes
+     * @return void
+     */
+    public function putMany(array $values, $minutes)
+    {
+        return $this->cache->setMulti($values, $minutes * 60);
+    }
 }
