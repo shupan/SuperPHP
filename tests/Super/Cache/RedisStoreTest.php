@@ -9,26 +9,25 @@
 namespace Super\Tests\Cache;
 
 use PHPUnit\Framework\TestCase;
-use Super\Cache\MemcachedStore;
+use Super\Cache\RedisConnection;
 
-class MemcachedStoreTest extends TestCase
+class RedisStoreTest extends TestCase
 {
 
     /**
      * 对缓存的CRUD的操作
      */
-    public function testCrudMemcached()
+    public function testCrudRedis()
     {
 
-        $servers = [
+        $server =
             [
                 'host' => '192.168.99.100',
                 'port' => 11211,
-                'weight' => 1000
-            ]
-        ];
+                'timeout' => 60
+            ];
 
-        $store = new MemcachedStore($servers);
+        $store = RedisConnection::getNewInstance($server['host'] ,  $server['port'] , $server['timeout']);
 
         $store->put("a1", "b1", 1);
         $this->assertEquals("b1", $store->get("a1"));

@@ -9,7 +9,7 @@ use Super\Api\Cache\Store;
  * Date: 2017/12/29
  * Time: 上午9:30
  */
-class MemcachedStore implements Store
+class RedisStore implements Store
 {
     use GetMultipleKeys;
 
@@ -20,11 +20,9 @@ class MemcachedStore implements Store
     private $cache = null;
 
 
-    public function __construct(array $servers, $connectionId = null, array $options = [], array $credentials = [])
+    public function __construct($host , $port , $timeout = 0.0)
     {
-
-        $mc = new MemcachedConnection();
-        $this->cache = $mc->connect($servers, $connectionId, $options, $credentials);
+        $this->cache = RedisConnection::getNewInstance($host, $port, $timeout);
     }
 
 
