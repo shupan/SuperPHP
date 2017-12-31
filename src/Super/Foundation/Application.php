@@ -1087,11 +1087,11 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     public function registerCoreContainerAliases()
     {
         foreach ([
-//            'app'                  => [\Super\Foundation\Application::class, \Super\Contracts\Container\Container::class, \Super\Contracts\Foundation\Application::class],
+            'app'                  => [\Super\Foundation\Application::class, \Super\Api\Container\Container::class, \Super\Api\Foundation\Application::class],
 //            'auth'                 => [\Super\Auth\AuthManager::class, \Super\Contracts\Auth\Factory::class],
 //            'auth.driver'          => [\Super\Contracts\Auth\Guard::class],
 //            'blade.compiler'       => [\Super\View\Compilers\BladeCompiler::class],
-//            'cache'                => [\Super\Cache\CacheManager::class, \Super\Contracts\Cache\Factory::class],
+            'cache'                => [\Super\Cache\CacheManager::class, \Super\Contracts\Cache\Factory::class],
 //            'cache.store'          => [\Super\Cache\Repository::class, \Super\Contracts\Cache\Repository::class],
 //            'config'               => [\Super\Config\Repository::class, \Super\Contracts\Config\Repository::class],
 //            'cookie'               => [\Super\Cookie\CookieJar::class, \Super\Contracts\Cookie\Factory::class, \Super\Contracts\Cookie\QueueingFactory::class],
