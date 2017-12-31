@@ -5,7 +5,7 @@ namespace Super\Api\Redis;
 interface Factory
 {
     /**
-     * Get a Redis connection by name.
+     * 获取Redis 根据Redis的名称
      *
      * @param  string  $name
      * @return \Super\Redis\Connections\Connection
