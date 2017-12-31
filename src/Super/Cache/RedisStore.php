@@ -12,7 +12,6 @@ use Super\Cache;
  * Date: 2017/12/29
  * Time: 上午9:30
  */
-
 class RedisStore implements Store
 {
 
@@ -56,7 +55,7 @@ class RedisStore implements Store
     public function put($key, $value, $minutes)
     {
 
-        $return = $this->cache->set($key, $value , $minutes * 60);
+        $return = $this->cache->set($key, $value, $minutes * 60);
         return $return;
     }
 
@@ -103,7 +102,7 @@ class RedisStore implements Store
      */
     public function decrement($key, $value = 1)
     {
-        return $this->cache->decrBy($key , $value);
+        return $this->cache->decrBy($key, $value);
     }
 
     /**
@@ -116,7 +115,7 @@ class RedisStore implements Store
     public function forever($key, $value)
     {
 
-        return $this->cache->set($key , $value ,0);
+        return $this->cache->set($key, $value, 0);
     }
 
     /**
@@ -129,7 +128,8 @@ class RedisStore implements Store
         return $this->prefix;
     }
 
-    public function setPrefix($prefix){
+    public function setPrefix($prefix)
+    {
 
         $this->prefix = $prefix;
     }
@@ -162,5 +162,11 @@ class RedisStore implements Store
         }
 
         return $this->cache->exec();
+    }
+
+    public function getCache()
+    {
+
+        return $this->cache;
     }
 }
