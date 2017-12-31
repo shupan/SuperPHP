@@ -1,6 +1,6 @@
 <?php
 
-namespace Super\Contracts\Console;
+namespace Super\Api\Console;
 
 interface Application
 {

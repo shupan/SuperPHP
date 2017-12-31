@@ -12,11 +12,11 @@ class ConsoleApplicationTest extends TestCase
         m::close();
     }
 
-    public function testAddSetsLaravelInstance()
+    public function testAddSetsAppInstance()
     {
         $app = $this->getMockConsole(['addToParent']);
         $command = m::mock('Super\Console\Command');
-        $command->shouldReceive('setLaravel')->once()->with(m::type('Super\Api\Foundation\Application'));
+        $command->shouldReceive('setApp')->once()->with(m::type('Super\Api\Foundation\Application'));
         $app->expects($this->once())->method('addToParent')->with($this->equalTo($command))->will($this->returnValue($command));
         $result = $app->add($command);
 

@@ -17,39 +17,39 @@ use Super\Api\Console\Application as ApplicationContract;
 class Application extends SymfonyApplication implements ApplicationContract
 {
     /**
-     * The Laravel application instance.
+     * app 实例
      *
      * @var \Super\Api\Container\Container
      */
-    protected $laravel;
+    protected $app;
 
     /**
-     * The output from the previous command.
+     * 在命令行之前的输出
      *
      * @var \Symfony\Component\Console\Output\BufferedOutput
      */
     protected $lastOutput;
 
     /**
-     * The console application bootstrappers.
+     * 控制台准备
      *
      * @var array
      */
     protected static $bootstrappers = [];
 
     /**
-     * Create a new Artisan console application.
+     * 创建控制台
      *
      * @param  \Super\Api\Container\Container  $laravel
      * @param  \Super\Api\Events\Dispatcher  $events
      * @param  string  $version
      * @return void
      */
-    public function __construct(Container $laravel, Dispatcher $events, $version)
+    public function __construct(Container $app, Dispatcher $events, $version)
     {
-        parent::__construct('Laravel Framework', $version);
+        parent::__construct('Super Framework', $version);
 
-        $this->laravel = $laravel;
+        $this->app = $app;
         $this->setAutoExit(false);
         $this->setCatchExceptions(false);
 
@@ -59,7 +59,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Determine the proper PHP executable.
+     * 判断是否php执行
      *
      * @return string
      */
@@ -69,7 +69,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Determine the proper Artisan executable.
+     * 判断是否Artisan 命令执行
      *
      * @return string
      */
@@ -79,7 +79,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Format the given command as a fully-qualified executable command.
+     * 格式化命令
      *
      * @param  string  $string
      * @return string
@@ -90,7 +90,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Register a console "starting" bootstrapper.
+     * 准备启动
      *
      * @param  \Closure  $callback
      * @return void
@@ -101,7 +101,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Bootstrap the console application.
+     * 控制台的根启动
      *
      * @return void
      */
@@ -113,7 +113,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Clear the console application bootstrappers.
+     * 清理启动的准备信息
      *
      * @return void
      */
@@ -123,7 +123,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Run an Artisan console command by name.
+     * 执行Artisan命令
      *
      * @param  string  $command
      * @param  array  $parameters
@@ -146,7 +146,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Get the output for the last run command.
+     * 输出
      *
      * @return string
      */
@@ -156,7 +156,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Add a command to the console.
+     * 把命令加入到控制台中
      *
      * @param  \Symfony\Component\Console\Command\Command  $command
      * @return \Symfony\Component\Console\Command\Command
@@ -164,14 +164,14 @@ class Application extends SymfonyApplication implements ApplicationContract
     public function add(SymfonyCommand $command)
     {
         if ($command instanceof Command) {
-            $command->setLaravel($this->laravel);
+            $command->setApp($this->app);
         }
 
         return $this->addToParent($command);
     }
 
     /**
-     * Add the command to the parent instance.
+     * 增加命令到父命令行中
      *
      * @param  \Symfony\Component\Console\Command\Command  $command
      * @return \Symfony\Component\Console\Command\Command
@@ -182,18 +182,18 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Add a command, resolving through the application.
+     * 解析命令
      *
      * @param  string  $command
      * @return \Symfony\Component\Console\Command\Command
      */
     public function resolve($command)
     {
-        return $this->add($this->laravel->make($command));
+        return $this->add($this->app->make($command));
     }
 
     /**
-     * Resolve an array of commands through the application.
+     * 批量解析命令
      *
      * @param  array|mixed  $commands
      * @return $this
@@ -210,9 +210,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Get the default input definitions for the applications.
-     *
-     * This is used to add the --env option to every available command.
+     * 增加环境变量到每个可用命令
      *
      * @return \Symfony\Component\Console\Input\InputDefinition
      */
@@ -224,7 +222,7 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Get the global environment option for the definition.
+     * 获取全局的环境变量操作
      *
      * @return \Symfony\Component\Console\Input\InputOption
      */
@@ -240,8 +238,8 @@ class Application extends SymfonyApplication implements ApplicationContract
      *
      * @return \Super\Api\Foundation\Application
      */
-    public function getLaravel()
+    public function getApp()
     {
-        return $this->laravel;
+        return $this->app;
     }
 }
