@@ -5,6 +5,8 @@ namespace Super\Redis;
 use Super\Api\Redis\Factory;
 use Super\Redis\Connections\PhpRedisConnection;
 use Super\Redis\Connections\PredisConnection;
+use Super\Redis\Connector\PhpredisConnector;
+use Super\Redis\Connector\PredisConnector;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 
 /**
@@ -19,7 +21,17 @@ use Symfony\Component\Process\Exception\InvalidArgumentException;
 class RedisManager implements Factory
 {
 
+    /**
+     * redis 连接的驱动
+     * @var null
+     */
     private $driver = null;
+
+    /**
+     * redis 的连接配置
+     * @var null
+     */
+    private $config = null;
 
     /**
      * 通过驱动和配置可以启动Redis操作
@@ -30,10 +42,14 @@ class RedisManager implements Factory
     public function __construct($driver, array $config)
     {
 
+        $this->driver = $driver;
+        $this->config = $config;
+
     }
 
     /**
      * 获取Redis 根据Redis 名称
+     * 1. 获取配置信息
      *
      * @param  string $name
      * @return \Super\Redis\Connections\Connection
@@ -41,6 +57,9 @@ class RedisManager implements Factory
     public function connection($name = null)
     {
 
+        if (isset($this->config, $name)) {
+            return $this->getConnector();
+        }
     }
 
     /**
@@ -51,16 +70,36 @@ class RedisManager implements Factory
     public function resolve($name)
     {
 
-        return '';
+        $name = $name ? $name : 'default';
+        $options = isset($this->config['options']) ? $this->config['options'] : [];
+        if (isset($this->config[$name])) {
+            return $this->getConnector()->connect($this->config, $options);
+        }
+
+        if (isset($this->config['clusters'][$name])) {
+            return $this->resolveCluster($name);
+        }
+
+        throw new InvalidArgumentException(
+            "Redis connection [{$name}] not configured."
+        );
     }
+
 
     /**
      * 通过Redis名称获取Redis的集群
      * @param $name
+     * @return \Predis\Client|\Redis
      */
     public function resolveCluster($name)
     {
+        $options = isset($this->config['options']) ? $this->config['options'] : [];
 
+        $clusterOptions = isset($this->config['clusters.options']) ? $this->config['clusters.options'] : [];
+
+        return $this->getConnector()->connectCluster(
+            $this->config['clusters'][$name], $clusterOptions, $options
+        );
     }
 
     /**
@@ -75,9 +114,11 @@ class RedisManager implements Factory
     public function getConnector()
     {
         if ($this->driver == 'predis') {
-            return new PredisConnection();
+
+            return new PredisConnector();
         } else if ($this->driver == 'phpredis') {
-            return new PhpRedisConnection();
+
+            return new PhpredisConnector();
         } else {
 
             throw new InvalidArgumentException(
