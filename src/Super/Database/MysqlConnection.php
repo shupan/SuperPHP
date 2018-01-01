@@ -8,7 +8,12 @@
 namespace Super\Database;
 
 
-class MysqlConnection
+/**
+ * Mysql 驱动连接
+ * Class MysqlConnection
+ * @package Super\Database
+ */
+class MysqlConnection extends  Connection
 {
 
 }

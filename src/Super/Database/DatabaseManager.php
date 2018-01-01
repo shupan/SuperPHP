@@ -8,6 +8,11 @@
 namespace Super\Database;
 
 
+/**
+ * 支持多个数据库执行管理和操作
+ * Class DatabaseManager
+ * @package Super\Database
+ */
 class DatabaseManager
 {
 
