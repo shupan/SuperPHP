@@ -78,6 +78,7 @@ class Connection implements ConnectionInterface
         return $result;
     }
 
+
     /**
      * 绑定多个多个参数的信息
      * @param PDOStatement $statement
@@ -88,6 +89,15 @@ class Connection implements ConnectionInterface
 
         //对statement填充必要的参数信息
         foreach ($bindings as $key => $val) {
+
+            //对日期格式的处理
+            if($val instanceof  \DateTimeInterface)
+            {
+                $val = $val->format('Y-m-d H:i:s');
+            }else if($val === false)
+            {
+                $val = 0;
+            }
 
             //如果是参数序号是从1开始的,如果是key字符串则不需要考
             $statement->bindValue(
