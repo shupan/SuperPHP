@@ -165,7 +165,7 @@ class Connection implements ConnectionInterface
     {
         return $this->statement($query, $bindings);
     }
-    
+
 
 
     /**
