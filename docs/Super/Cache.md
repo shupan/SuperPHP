@@ -22,9 +22,18 @@ CPU的处理速度和内存的访问速度差距越来越大，甚至可以达�
 ##### 4.1 Cache淘汰策略
 淘汰的算法：常见的淘汰策略主要有LRU
 -  LRU是Least Recently Used， 操作系统会通过页面置换的算法对存储进行管理，会对于很少使用的内存块移出来，放到指定的内存区域。 
+具体的执行过程可以看截图:
+    1. 对于每个进入缓存的元素都记录get数量
+    2. 当缓存put容量超过设置最大的容量值时候,就把get次数最少的进行移出。 
+![](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1514979307797&di=b1f2f3b55a0170a020b22ff11a4e33b2&imgtype=0&src=http%3A%2F%2Fimages.cnitblog.com%2Fi%2F221914%2F201407%2F032243438405423.png)
+
+##### 4.2 Cache的内存申请算法
+> Cache 申请内存的方法跟操作系统内存管理方法类似,主要使用slab管理的方式:
+每个slab包含若干大小为1M的内存页，这些内存又被分割成多个chunk，每个chunk存储一个item；
+在Cache启动初始化时，每个slab都预分配一个1M的内存页
 ![](http://blog.itpub.net/attachment/201501/31/15480802_14227156073VAU.png)
 
-##### 4.2 Cache的内存算法
+
 
 
 #### 5. 缓存中日常的实现
