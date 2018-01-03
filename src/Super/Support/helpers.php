@@ -958,7 +958,8 @@ if (! function_exists('tap')) {
     function tap($value, $callback = null)
     {
         if (is_null($callback)) {
-            return new HigherOrderTapProxy($value);
+           // return new HigherOrderTapProxy($value);
+            return null;
         }
 
         $callback($value);

@@ -12,21 +12,44 @@ use Closure;
 use Exception;
 use PDO;
 use PDOStatement;
+use Super\Database\Concerns\ManagesTransactions;
 use Super\Support\Str;
 
 class Connection implements ConnectionInterface
 {
 
+    use ManagesTransactions;
+
+    /**
+     * PDO 对象
+     * @var  \PDO
+     */
     protected $pdo = null;
+
+    /**
+     * 连接的数据库名称
+     * @var string
+     */
     protected $database = '';
+
+    /**
+     * 表前缀
+     * @var string
+     */
     protected $tablePrefix = '';
+
+    /**
+     * 事务活跃的数量
+     * @var int
+     */
+    protected  $transactions = 0;
 
 
     /**
      * 构建PDO 连接器
      * 描述:
      *  php 在5.1版本之后pdo已经统一了数据库接口的方法
-     * @param $pdo PDO  对象
+     * @param $pdo \PDOStatement  对象
      * @param string $database
      * @param string $tablePrefix
      */
@@ -142,50 +165,7 @@ class Connection implements ConnectionInterface
     {
         return $this->statement($query, $bindings);
     }
-
-    /**
-     * 事务回调
-     *
-     * @param  \Closure $callback
-     * @param  int $attempts
-     * @return mixed
-     *
-     * @throws \Throwable
-     */
-    public function transaction(Closure $callback, $attempts = 1)
-    {
-        // TODO: Implement transaction() method.
-    }
-
-    /**
-     * 开启事务
-     *
-     * @return void
-     */
-    public function beginTransaction()
-    {
-        // TODO: Implement beginTransaction() method.
-    }
-
-    /**
-     * 提交一个事务
-     *
-     * @return void
-     */
-    public function commit()
-    {
-        // TODO: Implement commit() method.
-    }
-
-    /**
-     * 回滚事务
-     *
-     * @return void
-     */
-    public function rollBack()
-    {
-        // TODO: Implement rollBack() method.
-    }
+    
 
 
     /**
@@ -238,7 +218,7 @@ class Connection implements ConnectionInterface
     /**
      * 获取PDO对象
      *
-     * @return PDO
+     * @return \PDO
      */
     public function getPdo()
     {
@@ -296,4 +276,44 @@ class Connection implements ConnectionInterface
             'Transaction() on null',
         ]);
     }
+
+    /**
+     *  检查连接是否存在死锁的情况,如果存在这进行对应的处理
+     *
+     * @param  \Exception  $e
+     * @return bool
+     */
+    protected function causedByDeadlock(Exception $e)
+    {
+        $message = $e->getMessage();
+
+        return Str::contains($message, [
+            'Deadlock found when trying to get lock',
+            'deadlock detected',
+            'The database file is locked',
+            'database is locked',
+            'database table is locked',
+            'A table in the database is locked',
+            'has been chosen as the deadlock victim',
+            'Lock wait timeout exceeded; try restarting transaction',
+        ]);
+    }
+
+    /**
+     * @return int
+     */
+    public function getTransactions()
+    {
+        return $this->transactions;
+    }
+
+    /**
+     * @param int $transactions
+     */
+    public function setTransactions($transactions)
+    {
+        $this->transactions = $transactions;
+    }
+
+
 }
