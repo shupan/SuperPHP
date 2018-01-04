@@ -1,241 +1,151 @@
 <?php
 
-namespace Illuminate\Encryption;
+namespace Super\Encryption;
 
 use RuntimeException;
-use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Contracts\Encryption\EncryptException;
-use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
+use Super\Api\Encryption\EncrypterApi;
 
-class Encrypter implements EncrypterContract
+class Encrypter implements EncrypterApi
 {
+
+
     /**
-     * The encryption key.
-     *
-     * @var string
+     * 秘钥的key
+     * @var
      */
     protected $key;
 
     /**
-     * The algorithm used for encryption.
-     *
-     * @var string
+     * 秘钥的算法
+     * @var
      */
     protected $cipher;
 
     /**
-     * Create a new encrypter instance.
-     *
-     * @param  string  $key
-     * @param  string  $cipher
-     * @return void
-     *
-     * @throws \RuntimeException
+     * 秘钥加密
+     * 描述:
+     *  当前只支持AES 16位和AES 32位, AES : 高级加密标准(Advanced Encryption Standard)
+     * @param $key
+     * @param string $cipher
+     * @throws  \Exception
      */
     public function __construct($key, $cipher = 'AES-128-CBC')
     {
-        $key = (string) $key;
 
-        if (static::supported($key, $cipher)) {
+        if ($this->validateCipher($key, $cipher)) {
             $this->key = $key;
             $this->cipher = $cipher;
-        } else {
-            throw new RuntimeException('The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths.');
         }
+        throw new \Exception("The only support AES-128-CBC and  AES-256-CBC chiper");
+
     }
 
+
     /**
-     * Determine if the given key and cipher combination is valid.
-     *
-     * @param  string  $key
-     * @param  string  $cipher
+     * 验证秘钥的操作
+     * @param $key
+     * @param $cipher
      * @return bool
      */
-    public static function supported($key, $cipher)
+    protected function validateCipher($key, $cipher)
     {
-        $length = mb_strlen($key, '8bit');
+        $len = mb_strlen($key, '8bit');
+        if ($len === 16 && $cipher === 'AES-128-CBC') {
+            return true;
+        }
 
-        return ($cipher === 'AES-128-CBC' && $length === 16) ||
-               ($cipher === 'AES-256-CBC' && $length === 32);
+        if ($len === 32 && $cipher === 'AES-256-CBC') {
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * Encrypt the given value.
+     * 给值进行加密操作
+     * 描述:
+     * 1. 使用openssl 加密,并制定加密的算法
+     * 2. 对于加密后的值进行base64进行加密操作
+     * 3. 返回加密后的结果
      *
-     * @param  mixed  $value
-     * @param  bool  $serialize
-     * @return string
+     * string openssl_encrypt ( string $data ,
+     *  string $method , string $key [, int $options = 0 [, string $iv = "" [, string &$tag = NULL [, string $aad = "" [, int $tag_length = 16 ]]]]] )
      *
-     * @throws \Illuminate\Contracts\Encryption\EncryptException
+     * @param $value
+     * @param bool $serialize
+     * @throws
+     * @return mixed
+     *
+     * ps :
+     * 初步完成了基本的加密和解密的操作。 
      */
     public function encrypt($value, $serialize = true)
     {
-        $iv = random_bytes(16);
-
-        // First we will encrypt the value using OpenSSL. After this is encrypted we
-        // will proceed to calculating a MAC for the encrypted value so that this
-        // value can be verified later as not having been changed by the users.
-        $value = \openssl_encrypt(
+        $encryptValue = \openssl_encrypt(
             $serialize ? serialize($value) : $value,
-            $this->cipher, $this->key, 0, $iv
-        );
+            $this->cipher,
+            $this->key);
 
-        if ($value === false) {
-            throw new EncryptException('Could not encrypt the data.');
+        if ($encryptValue == false) {
+            throw new \Exception("Could not encrypt the data!");
         }
 
-        // Once we get the encrypted value we'll go ahead and base64_encode the input
-        // vector and create the MAC for the encrypted value so we can then verify
-        // its authenticity. Then, we'll JSON the data into the "payload" array.
-        $mac = $this->hash($iv = base64_encode($iv), $value);
-
-        $json = json_encode(compact('iv', 'value', 'mac'));
-
-        if (! is_string($json)) {
-            throw new EncryptException('Could not encrypt the data.');
-        }
-
-        return base64_encode($json);
+        return base64_encode($value);
     }
 
     /**
-     * Encrypt a string without serialization.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function encryptString($value)
-    {
-        return $this->encrypt($value, false);
-    }
-
-    /**
-     * Decrypt the given value.
-     *
-     * @param  mixed  $payload
-     * @param  bool  $unserialize
-     * @return string
-     *
-     * @throws \Illuminate\Contracts\Encryption\DecryptException
+     * 解密的操作
+     * @param $payload
+     * @param bool $unserialize
+     * @throws
+     * @return mixed
      */
     public function decrypt($payload, $unserialize = true)
     {
-        $payload = $this->getJsonPayload($payload);
 
-        $iv = base64_decode($payload['iv']);
-
-        // Here we will decrypt the value. If we are able to successfully decrypt it
-        // we will then unserialize it and return it out to the caller. If we are
-        // unable to decrypt this value we will throw out an exception message.
-        $decrypted = \openssl_decrypt(
-            $payload['value'], $this->cipher, $this->key, 0, $iv
-        );
-
-        if ($decrypted === false) {
-            throw new DecryptException('Could not decrypt the data.');
+        $decrptyValue = base64_decode($payload);
+        $data = \openssl_decrypt($decrptyValue, $this->cipher, $this->key);
+        if ($data === false) {
+            throw new \Exception("Could not decrypt the data!");
         }
 
-        return $unserialize ? unserialize($decrypted) : $decrypted;
+        return $data;
     }
 
     /**
-     * Decrypt the given string without unserialization.
-     *
-     * @param  string  $payload
-     * @return string
+     * @return mixed
      */
-    public function decryptString($payload)
+    public function getCipher()
     {
-        return $this->decrypt($payload, false);
+        return $this->cipher;
     }
 
+
     /**
-     * Create a MAC for the given value.
-     *
-     * @param  string  $iv
-     * @param  mixed  $value
-     * @return string
+     * @param mixed $cipher
+     * @return Encrypter
      */
-    protected function hash($iv, $value)
+    public function setCipher($cipher)
     {
-        return hash_hmac('sha256', $iv.$value, $this->key);
+        $this->cipher = $cipher;
+        return $this;
     }
 
     /**
-     * Get the JSON array from the given payload.
-     *
-     * @param  string  $payload
-     * @return array
-     *
-     * @throws \Illuminate\Contracts\Encryption\DecryptException
-     */
-    protected function getJsonPayload($payload)
-    {
-        $payload = json_decode(base64_decode($payload), true);
-
-        // If the payload is not valid JSON or does not have the proper keys set we will
-        // assume it is invalid and bail out of the routine since we will not be able
-        // to decrypt the given value. We'll also check the MAC for this encryption.
-        if (! $this->validPayload($payload)) {
-            throw new DecryptException('The payload is invalid.');
-        }
-
-        if (! $this->validMac($payload)) {
-            throw new DecryptException('The MAC is invalid.');
-        }
-
-        return $payload;
-    }
-
-    /**
-     * Verify that the encryption payload is valid.
-     *
-     * @param  mixed  $payload
-     * @return bool
-     */
-    protected function validPayload($payload)
-    {
-        return is_array($payload) && isset(
-            $payload['iv'], $payload['value'], $payload['mac']
-        );
-    }
-
-    /**
-     * Determine if the MAC for the given payload is valid.
-     *
-     * @param  array  $payload
-     * @return bool
-     */
-    protected function validMac(array $payload)
-    {
-        $calculated = $this->calculateMac($payload, $bytes = random_bytes(16));
-
-        return hash_equals(
-            hash_hmac('sha256', $payload['mac'], $bytes, true), $calculated
-        );
-    }
-
-    /**
-     * Calculate the hash of the given payload.
-     *
-     * @param  array  $payload
-     * @param  string  $bytes
-     * @return string
-     */
-    protected function calculateMac($payload, $bytes)
-    {
-        return hash_hmac(
-            'sha256', $this->hash($payload['iv'], $payload['value']), $bytes, true
-        );
-    }
-
-    /**
-     * Get the encryption key.
-     *
-     * @return string
+     * @return mixed
      */
     public function getKey()
     {
         return $this->key;
     }
+
+    /**
+     * @param mixed $key
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+    }
+
+
 }

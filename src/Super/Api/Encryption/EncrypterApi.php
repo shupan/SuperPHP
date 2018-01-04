@@ -2,12 +2,12 @@
 namespace Super\Api\Encryption;
 
 /**
- * 加密的方式
+ * 加密/解密的方式
  * User: phil.shu
  * Date: 2018/1/4
  * Time: 下午4:06
  */
-interface Encrypter
+interface EncrypterApi
 {
 
     /**
