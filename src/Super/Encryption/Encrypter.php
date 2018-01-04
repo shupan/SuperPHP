@@ -35,9 +35,9 @@ class Encrypter implements EncrypterApi
         if ($this->validateCipher($key, $cipher)) {
             $this->key = $key;
             $this->cipher = $cipher;
+        } else {
+            throw new \Exception("The only support AES-128-CBC and  AES-256-CBC chiper");
         }
-        throw new \Exception("The only support AES-128-CBC and  AES-256-CBC chiper");
-
     }
 
 
@@ -77,20 +77,28 @@ class Encrypter implements EncrypterApi
      * @return mixed
      *
      * ps :
-     * 初步完成了基本的加密和解密的操作。 
+     * 初步完成了基本的加密和解密的操作。
      */
     public function encrypt($value, $serialize = true)
     {
-        $encryptValue = \openssl_encrypt(
+        $iv = random_bytes(16);
+        $value = \openssl_encrypt(
             $serialize ? serialize($value) : $value,
             $this->cipher,
-            $this->key);
+            $this->key, 0,
+            $iv);
 
-        if ($encryptValue == false) {
+        if ($value == false) {
             throw new \Exception("Could not encrypt the data!");
         }
 
-        return base64_encode($value);
+        $iv = base64_encode($iv);
+        $tmp = compact('iv', 'value');
+        $json = json_encode($tmp);
+        if (! is_string($json)) {
+            throw new \Exception('Could not encrypt the data.');
+        }
+        return base64_encode($json);
     }
 
     /**
@@ -103,13 +111,43 @@ class Encrypter implements EncrypterApi
     public function decrypt($payload, $unserialize = true)
     {
 
-        $decrptyValue = base64_decode($payload);
-        $data = \openssl_decrypt($decrptyValue, $this->cipher, $this->key);
+        $payloadData = json_decode( base64_decode($payload), true);
+        if (!$this->validPayload($payloadData)) {
+            throw new \Exception("The payload Data is invalid");
+        }
+        $iv = base64_decode($payloadData['iv']);
+        $encryptValue = $payloadData['value'];
+        $data = \openssl_decrypt($encryptValue, $this->cipher, $this->key, 0, $iv);
         if ($data === false) {
             throw new \Exception("Could not decrypt the data!");
         }
 
-        return $data;
+        return $unserialize ? unserialize($data) : $data ;
+    }
+
+    /**
+     * Create a MAC for the given value.
+     *
+     * @param  string  $iv
+     * @param  mixed  $value
+     * @return string
+     */
+    protected function hash($iv, $value)
+    {
+        return hash_hmac('sha256', $iv.$value, $this->key);
+    }
+
+    /**
+     * 验证后加密后的数据
+     *
+     * @param  mixed $payload
+     * @return bool
+     */
+    protected function validPayload($payload)
+    {
+        return is_array($payload) && isset(
+            $payload['iv'], $payload['value']
+        );
     }
 
     /**
