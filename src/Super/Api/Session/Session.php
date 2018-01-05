@@ -1,164 +1,150 @@
 <?php
 
-namespace Illuminate\Contracts\Session;
+namespace Super\Api\Session;
 
 interface Session
 {
     /**
-     * Get the name of the session.
+     * 获取Session 名称
      *
      * @return string
      */
     public function getName();
 
     /**
-     * Get the current session ID.
+     * 获取当前session ID
      *
      * @return string
      */
     public function getId();
 
     /**
-     * Set the session ID.
+     * 设置session id
      *
-     * @param  string  $id
+     * @param  string $id
      * @return void
      */
     public function setId($id);
 
     /**
-     * Start the session, reading the data from a handler.
+     * 开启session 句柄
      *
      * @return bool
      */
     public function start();
 
     /**
-     * Save the session data to storage.
+     * 保存session
      *
      * @return bool
      */
     public function save();
 
     /**
-     * Get all of the session data.
+     * 或所有的session
      *
      * @return array
      */
     public function all();
 
     /**
-     * Checks if a key exists.
+     * 检查session是否存在
      *
-     * @param  string|array  $key
+     * @param  string|array $key
      * @return bool
      */
     public function exists($key);
 
     /**
-     * Checks if an a key is present and not null.
+     * 检查一个session 不为空
      *
-     * @param  string|array  $key
+     * @param  string|array $key
      * @return bool
      */
     public function has($key);
 
     /**
-     * Get an item from the session.
+     * 获取一个session值
      *
-     * @param  string  $key
-     * @param  mixed  $default
+     * @param  string $key
+     * @param  mixed $default
      * @return mixed
      */
     public function get($key, $default = null);
 
     /**
-     * Put a key / value pair or array of key / value pairs in the session.
+     * 设置一个session的值
      *
-     * @param  string|array  $key
-     * @param  mixed       $value
+     * @param  string|array $key
+     * @param  mixed $value
      * @return void
      */
     public function put($key, $value = null);
 
     /**
-     * Get the CSRF token value.
+     * 获取csrf token 的值
      *
      * @return string
      */
     public function token();
 
     /**
-     * Remove an item from the session, returning its value.
+     * 移除一个session key
      *
-     * @param  string  $key
+     * @param  string $key
      * @return mixed
      */
     public function remove($key);
 
     /**
-     * Remove one or many items from the session.
+     * 移除多个session 的key
      *
-     * @param  string|array  $keys
+     * @param  string|array $keys
      * @return void
      */
     public function forget($keys);
 
     /**
-     * Remove all of the items from the session.
+     * 移除session的所有项
      *
      * @return void
      */
     public function flush();
 
     /**
-     * Generate a new session ID for the session.
+     * 对session 产生一个session id
      *
-     * @param  bool  $destroy
+     * @param  bool $destroy
      * @return bool
      */
     public function migrate($destroy = false);
 
     /**
-     * Determine if the session has been started.
+     * 检查session 是否已经开启了
      *
      * @return bool
      */
     public function isStarted();
 
-    /**
-     * Get the previous URL from the session.
-     *
-     * @return string|null
-     */
-    public function previousUrl();
 
     /**
-     * Set the "previous" URL in the session.
-     *
-     * @param  string  $url
-     * @return void
-     */
-    public function setPreviousUrl($url);
-
-    /**
-     * Get the session handler instance.
+     * 获取session 的句柄
      *
      * @return \SessionHandlerInterface
      */
     public function getHandler();
 
     /**
-     * Determine if the session handler needs a request.
+     * 检查该session 是否需要处理
      *
      * @return bool
      */
     public function handlerNeedsRequest();
 
     /**
-     * Set the request on the handler instance.
+     * 设置session需要请求的对象
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Super\Http\Request $request
      * @return void
      */
     public function setRequestOnHandler($request);

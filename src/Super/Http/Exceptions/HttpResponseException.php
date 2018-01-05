@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Http\Exceptions;
+namespace Super\Http\Exceptions;
 
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
@@ -8,14 +8,14 @@ use Symfony\Component\HttpFoundation\Response;
 class HttpResponseException extends RuntimeException
 {
     /**
-     * The underlying response instance.
+     * 请求的Reponse对象
      *
      * @var \Symfony\Component\HttpFoundation\Response
      */
     protected $response;
 
     /**
-     * Create a new HTTP response exception instance.
+     * 获取一个Response实例
      *
      * @param  \Symfony\Component\HttpFoundation\Response  $response
      * @return void
@@ -26,7 +26,7 @@ class HttpResponseException extends RuntimeException
     }
 
     /**
-     * Get the underlying response instance.
+     * 获取Reponse对象
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */

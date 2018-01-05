@@ -9,11 +9,11 @@ namespace Super\Api\Router;
 
 
 /**
- * HttpMethod
- * Interface HttpMethod
+ * RouterRegister
+ * Interface RouterRegister
  * @package Super\Api\Router
  */
-interface HttpMethod
+interface RouterRegister
 {
 
     /**

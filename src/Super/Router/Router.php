@@ -11,7 +11,7 @@ use Super\Http\Request;
 use Super\Container\Container;
 use Super\Http\Exceptions\HttpResponseException;
 
-class Route
+class Router
 {
     use RouteDependencyResolverTrait;
 
