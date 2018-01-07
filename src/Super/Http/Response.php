@@ -1,11 +1,11 @@
 <?php
 
-namespace Illuminate\Http;
+namespace Super\Http;
 
 use ArrayObject;
 use JsonSerializable;
-use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Contracts\Support\Renderable;
+use Super\Api\Support\Jsonable;
+use Super\Api\Support\Renderable;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 class Response extends BaseResponse

@@ -1,28 +1,28 @@
 <?php
 
-namespace Illuminate\Http;
+namespace Super\Http;
 
 use Exception;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Super\Http\Exceptions\HttpResponseException;
 
 trait ResponseTrait
 {
     /**
-     * The original content of the response.
+     * 返回的原始内容
      *
      * @var mixed
      */
     public $original;
 
     /**
-     * The exception that triggered the error response (if applicable).
+     * 应用的异常信息
      *
      * @var \Exception|null
      */
     public $exception;
 
     /**
-     * Get the status code for the response.
+     * 返回的状态码
      *
      * @return int
      */
@@ -32,7 +32,7 @@ trait ResponseTrait
     }
 
     /**
-     * Get the content of the response.
+     * 获取返回的内容信息
      *
      * @return string
      */
@@ -42,7 +42,7 @@ trait ResponseTrait
     }
 
     /**
-     * Get the original response content.
+     * 获取原先的response 信息
      *
      * @return mixed
      */
@@ -52,7 +52,7 @@ trait ResponseTrait
     }
 
     /**
-     * Set a header on the Response.
+     * 设置请求头的信息
      *
      * @param  string  $key
      * @param  array|string  $values
@@ -125,7 +125,7 @@ trait ResponseTrait
     /**
      * Throws the response in a HttpResponseException instance.
      *
-     * @throws \Illuminate\Http\Exceptions\HttpResponseException
+     * @throws \Super\Http\Exceptions\HttpResponseException
      */
     public function throwResponse()
     {
