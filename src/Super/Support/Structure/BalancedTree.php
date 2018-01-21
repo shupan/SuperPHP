@@ -8,7 +8,14 @@
 namespace Super\Support\Structure;
 
 
-class BalancedTree
+/**
+ * 平衡树
+ * 描述:
+ * 1. 左右节点的数据差不超过1
+ * Class BalancedTree
+ * @package Super\Support\Structure
+ */
+class BalancedTree extends BinaryTree
 {
 
 }

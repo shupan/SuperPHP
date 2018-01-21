@@ -8,7 +8,7 @@
 namespace Super\Support\Structure;
 
 
-class MforkTree
+class MforkTree extends BalancedTree
 {
 
 }
