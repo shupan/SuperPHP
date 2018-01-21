@@ -12,12 +12,47 @@ class Stack
 {
 
     /**
+     * 栈的大小
+     * @var array
+     */
+    protected $arr = [];
+
+    /**
+     * 栈最大长度
+     * @var int
+     */
+    protected $maxLength = 0;
+
+    /**
+     * 当前的长度
+     * @var int
+     */
+    protected $currentLength = 0;
+
+    /**
+     * 设置栈的大小
+     * Stack constructor.
+     * @param $maxLength
+     */
+    public function __construct($maxLength)
+    {
+        $this->maxLength = $maxLength;
+    }
+
+    /**
      * push 到栈里面
      * @param $val
+     * @return  boolean
      */
     public function push($val)
     {
+        if ($this->getLength() >= $this->getMaxLength()) {
+            return false;
+        }
 
+        $this->arr[] = $val;
+        $this->currentLength = $this->currentLength + 1;
+        return true;
     }
 
     /**
@@ -26,6 +61,18 @@ class Stack
     public function pop()
     {
 
+        if ($this->currentLength - 1 < 0) {
+            return false;
+        }
+
+        $this->currentLength = $this->currentLength - 1;
+        return array_pop($this->arr);
+
+    }
+
+    public function getMaxLength()
+    {
+        return $this->maxLength;
     }
 
     /**
@@ -34,5 +81,6 @@ class Stack
     public function getLength()
     {
 
+        return $this->currentLength;
     }
 }
