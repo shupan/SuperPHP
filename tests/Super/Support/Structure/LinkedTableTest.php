@@ -36,6 +36,10 @@ class LinkedTableTest extends TestCase
         $linkedTable->addNode($node);
         $linkedTable->printNode();
 
+        $name = $linkedTable->getNode(3);
+        $this->assertEquals('n3', $name);
+        $this->assertEquals('n2', $linkedTable->getNode(2));
+        $this->assertEquals(4, $linkedTable->getLength());
         $linkedTable->deleteNode(2);
         $linkedTable->deleteNode(3);
         $linkedTable->deleteNode(4);
@@ -43,6 +47,8 @@ class LinkedTableTest extends TestCase
 
         $linkedTable->deleteNode(1);
         $linkedTable->printNode();
+        $this->assertEquals(0, $linkedTable->getLength());
+
 
     }
 }

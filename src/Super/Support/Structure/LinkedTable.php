@@ -40,6 +40,7 @@ class LinkedTable
 
         if (empty($this->head)) {
             $this->head = $node;
+            return true;
         }
         $current = $this->head;
         while ($current->next != null) {
@@ -85,6 +86,34 @@ class LinkedTable
 
     }
 
+    /**
+     * 根据节点获取用户的信息
+     * @param $id
+     * @return bool id
+     */
+    public function getNode($id)
+    {
+        $current = $this->head;
+        if ($current == null) {
+            return false;
+        }
+
+        if ($current->id == $id) {
+            return $current->name;
+        }
+
+        while ($current->next != null) {
+            if ($current->next->id == $id) {
+
+                return $current->next->name;
+            }
+            $current = $current->next;
+        }
+
+        return false;
+
+    }
+
 
     /**
      * 打印这个链表所有的节点的数据
@@ -107,6 +136,19 @@ class LinkedTable
     public function getLength()
     {
 
+        $cnt = 0;
+        $current = $this->head;
+        if (!empty($current)) {
+            $cnt = $cnt + 1;
+        } else {
+            return $cnt;
+        }
+        while ($current->next != null) {
+
+            $cnt = $cnt + 1;
+            $current = $current->next;
+        }
+        return $cnt;
     }
 
 }
