@@ -1,17 +1,17 @@
 <?php
 
-use Illuminate\Support\HtmlString;
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Bus\Dispatcher;
-use Illuminate\Contracts\Auth\Access\Gate;
-use Illuminate\Contracts\Routing\UrlGenerator;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
-use Illuminate\Contracts\View\Factory as ViewFactory;
-use Illuminate\Contracts\Cookie\Factory as CookieFactory;
-use Illuminate\Database\Eloquent\Factory as EloquentFactory;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use Illuminate\Contracts\Broadcasting\Factory as BroadcastFactory;
+use Super\Support\HtmlString;
+use Super\Container\Container;
+use Super\Api\Bus\Dispatcher;
+use Super\Api\Auth\Access\Gate;
+use Super\Api\Routing\UrlGenerator;
+use Super\Api\Routing\ResponseFactory;
+use Super\Api\Auth\Factory as AuthFactory;
+use Super\Api\View\Factory as ViewFactory;
+use Super\Api\Cookie\Factory as CookieFactory;
+use Super\Database\Eloquent\Factory as EloquentFactory;
+use Super\Api\Validation\Factory as ValidationFactory;
+use Super\Api\Broadcasting\Factory as BroadcastFactory;
 
 if (! function_exists('abort')) {
     /**
@@ -94,7 +94,7 @@ if (! function_exists('app')) {
      *
      * @param  string  $abstract
      * @param  array   $parameters
-     * @return mixed|\Illuminate\Foundation\Application
+     * @return mixed|\Super\Foundation\Application
      */
     function app($abstract = null, array $parameters = [])
     {
@@ -140,7 +140,7 @@ if (! function_exists('auth')) {
      * Get the available auth instance.
      *
      * @param  string|null  $guard
-     * @return \Illuminate\Contracts\Auth\Factory|\Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard
+     * @return \Super\Api\Auth\Factory|\Super\Api\Auth\Guard|\Super\Api\Auth\StatefulGuard
      */
     function auth($guard = null)
     {
@@ -159,7 +159,7 @@ if (! function_exists('back')) {
      * @param  int    $status
      * @param  array  $headers
      * @param  mixed  $fallback
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Super\Http\RedirectResponse
      */
     function back($status = 302, $headers = [], $fallback = false)
     {
@@ -199,7 +199,7 @@ if (! function_exists('broadcast')) {
      * Begin broadcasting an event.
      *
      * @param  mixed|null  $event
-     * @return \Illuminate\Broadcasting\PendingBroadcast|void
+     * @return \Super\Broadcasting\PendingBroadcast|void
      */
     function broadcast($event = null)
     {
@@ -312,7 +312,7 @@ if (! function_exists('csrf_field')) {
     /**
      * Generate a CSRF token form field.
      *
-     * @return \Illuminate\Support\HtmlString
+     * @return \Super\Support\HtmlString
      */
     function csrf_field()
     {
@@ -452,7 +452,7 @@ if (! function_exists('factory')) {
      * Create a model factory builder for a given class, name, and amount.
      *
      * @param  dynamic  class|class,name|class,amount|class,name,amount
-     * @return \Illuminate\Database\Eloquent\FactoryBuilder
+     * @return \Super\Database\Eloquent\FactoryBuilder
      */
     function factory()
     {
@@ -490,7 +490,7 @@ if (! function_exists('logger')) {
      *
      * @param  string  $message
      * @param  array  $context
-     * @return \Illuminate\Contracts\Logging\Log|null
+     * @return \Super\Api\Logging\Log|null
      */
     function logger($message = null, array $context = [])
     {
@@ -507,7 +507,7 @@ if (! function_exists('method_field')) {
      * Generate a form field to spoof the HTTP verb used by forms.
      *
      * @param  string  $method
-     * @return \Illuminate\Support\HtmlString
+     * @return \Super\Support\HtmlString
      */
     function method_field($method)
     {
@@ -521,7 +521,7 @@ if (! function_exists('mix')) {
      *
      * @param  string  $path
      * @param  string  $manifestDirectory
-     * @return \Illuminate\Support\HtmlString
+     * @return \Super\Support\HtmlString
      *
      * @throws \Exception
      */
@@ -614,7 +614,7 @@ if (! function_exists('redirect')) {
      * @param  int     $status
      * @param  array   $headers
      * @param  bool    $secure
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return \Super\Routing\Redirector|\Super\Http\RedirectResponse
      */
     function redirect($to = null, $status = 302, $headers = [], $secure = null)
     {
@@ -632,7 +632,7 @@ if (! function_exists('request')) {
      *
      * @param  array|string  $key
      * @param  mixed   $default
-     * @return \Illuminate\Http\Request|string|array
+     * @return \Super\Http\Request|string|array
      */
     function request($key = null, $default = null)
     {
@@ -681,7 +681,7 @@ if (! function_exists('response')) {
      * @param  string  $content
      * @param  int     $status
      * @param  array   $headers
-     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Contracts\Routing\ResponseFactory
+     * @return \Symfony\Component\HttpFoundation\Response|\Super\Api\Routing\ResponseFactory
      */
     function response($content = '', $status = 200, array $headers = [])
     {
@@ -781,7 +781,7 @@ if (! function_exists('trans')) {
      * @param  string  $key
      * @param  array   $replace
      * @param  string  $locale
-     * @return \Illuminate\Contracts\Translation\Translator|string|array|null
+     * @return \Super\Api\Translation\Translator|string|array|null
      */
     function trans($key = null, $replace = [], $locale = null)
     {
@@ -816,7 +816,7 @@ if (! function_exists('__')) {
      * @param  string  $key
      * @param  array  $replace
      * @param  string  $locale
-     * @return \Illuminate\Contracts\Translation\Translator|string
+     * @return \Super\Api\Translation\Translator|string
      */
     function __($key = null, $replace = [], $locale = null)
     {
@@ -831,7 +831,7 @@ if (! function_exists('url')) {
      * @param  string  $path
      * @param  mixed   $parameters
      * @param  bool    $secure
-     * @return \Illuminate\Contracts\Routing\UrlGenerator|string
+     * @return \Super\Api\Routing\UrlGenerator|string
      */
     function url($path = null, $parameters = [], $secure = null)
     {
@@ -851,7 +851,7 @@ if (! function_exists('validator')) {
      * @param  array  $rules
      * @param  array  $messages
      * @param  array  $customAttributes
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @return \Super\Api\Validation\Validator
      */
     function validator(array $data = [], array $rules = [], array $messages = [], array $customAttributes = [])
     {
@@ -872,7 +872,7 @@ if (! function_exists('view')) {
      * @param  string  $view
      * @param  array   $data
      * @param  array   $mergeData
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * @return \Super\View\View|\Super\Api\View\Factory
      */
     function view($view = null, $data = [], $mergeData = [])
     {

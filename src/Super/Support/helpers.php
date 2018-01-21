@@ -1,11 +1,11 @@
 <?php
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Debug\Dumper;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HigherOrderTapProxy;
+use Super\Support\Arr;
+use Super\Support\Str;
+use Super\Support\Collection;
+use Super\Support\Debug\Dumper;
+use Super\Contracts\Support\Htmlable;
+use Super\Support\HigherOrderTapProxy;
 
 if (! function_exists('append_config')) {
     /**
@@ -386,7 +386,7 @@ if (! function_exists('collect')) {
      * Create a collection from the given value.
      *
      * @param  mixed  $value
-     * @return \Illuminate\Support\Collection
+     * @return \Super\Support\Collection
      */
     function collect($value = null)
     {
@@ -535,7 +535,7 @@ if (! function_exists('e')) {
     /**
      * Escape HTML special characters in a string.
      *
-     * @param  \Illuminate\Contracts\Support\Htmlable|string  $value
+     * @param  \Super\Contracts\Support\Htmlable|string  $value
      * @return string
      */
     function e($value)
